@@ -1,6 +1,3 @@
-Here's the updated README with the attribution to Flicker Finance:
-
-```markdown
 # indexes-rs
 
 A Rust library providing a comprehensive collection of technical analysis indicators for financial market analysis.
