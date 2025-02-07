@@ -1,0 +1,18 @@
+[package]
+name = "indexes-rs"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Onik Sahakyan <onik.sahakyan.09@gmail.com>"]
+description = "A comprehensive collection of technical analysis indicators including RSI, EMA, Bollinger Bands, and more. Designed for financial market analysis with a focus on accuracy and performance."
+repository = "https://github.com/Flicker-Finance/indexes-rs"
+documentation = "https://docs.rs/indexes-rs"
+readme = "README.md"
+keywords = ["technical-analysis", "trading", "finance", "indicators", "market"]
+categories = ["finance", "mathematics"]
+exclude = ["tests/*", "examples/*", ".github/*"]
+rust-version = "1.70"
+
+[dependencies]
+approx = "0.5.1"
+serde = { version = "1.0.217", features = ["derive"] }
