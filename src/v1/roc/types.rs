@@ -1,5 +1,8 @@
+use serde::Serialize;
+
 use crate::v1::types::TradingSignal;
 
+#[derive(Serialize, Clone)]
 pub struct ROCResult {
     pub value: f64,                // Raw ROC value
     pub momentum: f64,             // Normalized momentum (-100 to 100)

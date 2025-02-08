@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::v1::{
     ema::main::ExponentialMovingAverage,
     macd::{main::MACD, types::MACDResult},
@@ -29,14 +31,14 @@ pub struct MovingAverageResults {
     pub macd: Option<MACDResult>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct SMAValues {
     pub short: Option<f64>,
     pub medium: Option<f64>,
     pub long: Option<f64>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Clone)]
 pub struct EMAValues {
     pub short: Option<f64>,
     pub medium: Option<f64>,

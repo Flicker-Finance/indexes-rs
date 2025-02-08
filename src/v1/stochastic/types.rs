@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, PartialEq)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum StochSignal {
     Buy,
     Sell,
@@ -7,7 +9,7 @@ pub enum StochSignal {
     Neutral,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum StochCondition {
     Overbought,
     Oversold,
@@ -16,13 +18,14 @@ pub enum StochCondition {
     Neutral,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum StochCrossover {
     Bullish,
     Bearish,
     None,
 }
 
+#[derive(Serialize, Clone)]
 pub struct StochResult {
     pub k_value: f64,
     pub d_value: f64,
