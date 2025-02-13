@@ -7,7 +7,7 @@ pub enum MarketCondition {
     Neutral,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, PartialEq, Clone)]
 pub struct RSIResult {
     pub value: f64,
     pub condition: MarketCondition,

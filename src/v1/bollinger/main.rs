@@ -1,4 +1,4 @@
-use crate::v1::sma::main::SimpleMovingAverage;
+use crate::v1::sma::main::{SMAError, SimpleMovingAverage};
 
 use super::types::BBResult;
 
@@ -10,13 +10,13 @@ pub struct BollingerBands {
 }
 
 impl BollingerBands {
-    pub fn new(period: usize, multiplier: f64) -> Self {
-        BollingerBands {
-            sma: SimpleMovingAverage::new(period),
+    pub fn new(period: usize, multiplier: f64) -> Result<Self, SMAError> {
+        Ok(BollingerBands {
+            sma: SimpleMovingAverage::new(period)?,
             period,
             multiplier,
             values: Vec::new(),
-        }
+        })
     }
 
     pub fn calculate(&mut self, price: f64) -> Option<BBResult> {
@@ -28,13 +28,13 @@ impl BollingerBands {
         }
 
         let middle = self.sma.calculate()?;
-        let std_dev = self.calculate_std_dev(middle)?;
+        let std_dev = self.calculate_std_dev(middle.value)?;
         let band_width = std_dev * self.multiplier;
 
         Some(BBResult {
-            upper: middle + band_width,
-            middle,
-            lower: middle - band_width,
+            upper: middle.value + band_width,
+            middle: middle.value,
+            lower: middle.value - band_width,
         })
     }
 

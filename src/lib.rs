@@ -11,6 +11,7 @@ pub mod v1 {
         pub mod main;
     }
     pub mod ma {
+        mod __tests__;
         pub mod main;
     }
     pub mod macd {
