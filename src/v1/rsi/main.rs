@@ -12,7 +12,9 @@
 //!
 //! ```rust
 //! use indexes_rs::v1::rsi::main::RSI;
-//! use indexes_rs::v1::rsi::types::{MarketCondition, RSIResult};
+//! use indexes_rs::v1::sma::main::SMAError;
+//! use indexes_rs::v1::rsi::types::RSIResult;
+//! use indexes_rs::v1::types::TrendDirection;
 //!
 //! let mut rsi = RSI::new(14, None, None);
 //! let prices = vec![44.34, 44.09, 44.15, 43.61, 44.33, 44.83, 45.10, 45.42];
@@ -61,22 +63,6 @@ impl RSI {
     /// * `period` - The number of periods over which to calculate the RSI.
     /// * `overbought` - Optional overbought threshold. If `None`, defaults to 70.0.
     /// * `oversold` - Optional oversold threshold. If `None`, defaults to 30.0.
-    ///
-    /// # Examples
-    ///
-    /// Using default thresholds:
-    ///
-    /// ```rust
-    /// use indexes_rs::v1::rsi::main::RSI;
-    /// let rsi = RSI::new(14, None, None);
-    /// ```
-    ///
-    /// Using custom thresholds:
-    ///
-    /// ```rust
-    /// use indexes_rs::v1::rsi::main::RSI;
-    /// let rsi = RSI::new(14, Some(80.0), Some(20.0));
-    /// ```
     pub fn new(period: usize, overbought: Option<f64>, oversold: Option<f64>) -> Self {
         RSI {
             period,
@@ -111,6 +97,10 @@ impl RSI {
     ///
     /// ```rust
     /// use indexes_rs::v1::rsi::main::RSI;
+    /// use indexes_rs::v1::sma::main::SMAError;
+    /// use indexes_rs::v1::rsi::types::RSIResult;
+    /// use indexes_rs::v1::types::TrendDirection;
+    ///
     /// let mut rsi = RSI::new(14, None, None);
     /// let price = 44.33;
     /// if let Some(result) = rsi.calculate(price) {

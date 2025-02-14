@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum PricePosition {
     AboveResistance,
     BelowSupport,
@@ -10,7 +10,7 @@ pub enum PricePosition {
     Unknown,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct SRResult {
     pub nearest_support: Option<f64>,
     pub nearest_resistance: Option<f64>,

@@ -21,16 +21,14 @@
 //! sma.add_value(4.0);
 //! sma.add_value(6.0);
 //!
-//! // First calculation returns Neutral trend since no previous value exists.
+//! // First calculation returns Sideways trend since no previous value exists.
 //! let result = sma.calculate().unwrap();
 //! assert_eq!(result.value, 4.0);
 //! assert_eq!(result.trend, TrendDirection::Sideways);
 //! ```
 
-use crate::v1::types::TrendDirection;
-
 pub use super::types::{SMAError, SMAResult};
-
+use crate::v1::types::TrendDirection;
 use std::collections::VecDeque;
 
 /// A Simple Moving Average (SMA) calculator that maintains a moving window of values
@@ -41,7 +39,7 @@ use std::collections::VecDeque;
 /// with the previous SMA value:
 /// - If the current SMA is greater, the trend is `Up`.
 /// - If it is lower, the trend is `Down`.
-/// - If it is the same (or if no previous value exists), the trend is `Neutral`.
+/// - If it is the same (or if no previous value exists), the trend is `Sideways`.
 #[derive(Debug, PartialEq)]
 pub struct SimpleMovingAverage {
     /// The period over which the moving average is calculated.
@@ -145,7 +143,7 @@ impl SimpleMovingAverage {
     /// sma.add_value(6.0);
     ///
     /// let result = sma.calculate().unwrap();
-    /// // The average of [2.0, 4.0, 6.0] is 4.0, and since no previous SMA exists, the trend is Neutral.
+    /// // The average of [2.0, 4.0, 6.0] is 4.0, and since no previous SMA exists, the trend is Sideways.
     /// assert_eq!(result.value, 4.0);
     /// assert_eq!(result.trend, TrendDirection::Sideways);
     /// ```
@@ -153,14 +151,12 @@ impl SimpleMovingAverage {
         if self.values.len() < self.period {
             return None;
         }
-
         let current_sma = self.sum / self.period as f64;
         let trend = match self.last_value {
             Some(prev) if current_sma > prev => TrendDirection::Up,
             Some(prev) if current_sma < prev => TrendDirection::Down,
             _ => TrendDirection::Sideways,
         };
-
         self.last_value = Some(current_sma);
         Some(SMAResult { value: current_sma, trend })
     }

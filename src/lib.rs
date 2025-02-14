@@ -1,13 +1,15 @@
 pub mod v1 {
     pub mod atr {
+        mod __tests__;
         pub mod main;
     }
     pub mod bollinger {
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod ema {
-        pub mod __tests__;
+        mod __tests__;
         pub mod main;
     }
     pub mod ma {
@@ -15,34 +17,38 @@ pub mod v1 {
         pub mod main;
     }
     pub mod macd {
-        pub mod __tests__;
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
 
     pub mod rsi {
-        pub mod __tests__;
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod sma {
-        pub mod __tests__;
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod roc {
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod momentum {
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod stochastic {
+        mod __tests__;
         pub mod main;
         pub mod types;
     }
     pub mod support_resistance {
+        mod _tests__;
         pub mod main;
         pub mod types;
     }
