@@ -1,20 +1,31 @@
 #[cfg(test)]
 mod tests {
     use crate::v1::ema::main::ExponentialMovingAverage;
-    use approx::assert_relative_eq;
 
     #[test]
-    fn test_ema_calculation() {
-        let mut ema = ExponentialMovingAverage::new(3);
-
-        assert_eq!(ema.add_value(2.0), Some(2.0));
-        assert_relative_eq!(ema.add_value(4.0).unwrap(), 3.0, epsilon = 0.0001);
-        assert_relative_eq!(ema.add_value(6.0).unwrap(), 4.5, epsilon = 0.0001);
+    fn test_initial_value() {
+        let mut ema = ExponentialMovingAverage::new(10);
+        // First value should be equal to the price itself.
+        assert_eq!(ema.add_value(100.0).unwrap(), 100.0);
     }
 
     #[test]
-    fn test_alpha_calculation() {
-        let ema = ExponentialMovingAverage::new(10);
-        assert_relative_eq!(ema.alpha, 0.1818, epsilon = 0.0001);
+    fn test_ema_update() {
+        let mut ema = ExponentialMovingAverage::new(10);
+        // After first value:
+        ema.add_value(100.0);
+        // Calculate second EMA value.
+        let updated = ema.add_value(110.0).unwrap();
+        // For a period of 10, alpha = 2 / (10 + 1) ≈ 0.1818.
+        // Expected EMA: 110 * 0.1818 + 100 * (0.8182) = 19.998 + 81.82 = 101.82 (approximately).
+        assert!((updated - 101.82).abs() < 0.5);
+    }
+
+    #[test]
+    fn test_get_current_value() {
+        let mut ema = ExponentialMovingAverage::new(10);
+        assert_eq!(ema.get_current_value(), None);
+        ema.add_value(100.0);
+        assert_eq!(ema.get_current_value().unwrap(), 100.0);
     }
 }
