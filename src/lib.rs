@@ -126,10 +126,6 @@ pub mod v1 {
         pub mod main;
         pub mod types;
     }
-    pub mod types {
-        //! **Shared Types Module**
-        //!
-        //! Contains common types such as enums and structs used across multiple modules
-        //! in the library.
-    }
+
+    pub mod types;
 }
