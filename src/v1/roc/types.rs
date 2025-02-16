@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::v1::types::TradingSignal;
 
 /// The result of an ROC calculation.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ROCResult {
     /// The calculated ROC value as a percentage.
     pub value: f64,
