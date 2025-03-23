@@ -15,7 +15,10 @@ mod tests {
     fn test_stochastic_calculation() {
         let mut stoch = StochasticOscillator::new(14, 3, 3);
         // Feed in 14 prices so that we have enough data.
-        let prices = vec![100.0, 102.0, 101.5, 103.0, 104.0, 102.5, 101.0, 100.5, 99.5, 98.0, 97.5, 98.5, 99.0, 100.0];
+        let prices = vec![
+            100.0, 102.0, 101.5, 103.0, 104.0, 102.5, 101.0, 100.5, 99.5, 98.0, 97.5, 98.5, 99.0,
+            100.0,
+        ];
         let mut result: Option<StochResult> = None;
         for price in prices {
             result = stoch.calculate(price);
