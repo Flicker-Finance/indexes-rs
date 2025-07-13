@@ -1,22 +1,23 @@
 /*!
 # indexes_rs Library
 
-Welcome to the `indexes_rs` library! This library provides a suite of technical indicators for financial market analysis. All indicators and related types are grouped under the `v1` module, which represents version 1 of the library.
+Welcome to the `indexes_rs` library! This library provides a suite of technical indicators for financial market analysis. All indicators and related types are grouped under the `v1` and `v2` modules.
 
-The indicators implemented in this library include:
+## Version 1 (v1)
+The original collection of fundamental technical indicators including RSI, MACD, Bollinger Bands, and other essential indicators for technical analysis.
 
-- **ATR (Average True Range):** Measures market volatility.
-- **Bollinger Bands:** Uses a simple moving average (SMA) and standard deviation to define upper and lower price bands.
-- **EMA (Exponential Moving Average):** A weighted moving average that gives more importance to recent prices.
-- **MA (Moving Averages):** A unified module that consolidates multiple moving averages (SMA, EMA, MACD).
-- **MACD (Moving Average Convergence Divergence):** Combines fast and slow EMAs with a signal line to provide trend-following signals.
-- **RSI (Relative Strength Index):** An oscillator used to identify overbought and oversold conditions.
-- **SMA (Simple Moving Average):** Calculates the average of the close prices over a given period.
-- **ROC (Rate of Change):** Measures the percentage change between the current and a past price.
-- **Momentum:** Measures the difference between the current price and the price from a specified number of periods ago.
-- **Stochastic Oscillator:** A momentum indicator comparing a particular closing price to a range of its prices over a certain period.
-- **Support & Resistance:** Identifies potential support and resistance levels based on price swings.
-- **Shared Types:** Common structures and enumerations used across multiple indicators.
+## Version 2 (v2)
+An advanced collection of technical indicators specifically designed for cryptocurrency trading algorithms and sophisticated signal aggregation systems. This version focuses on volume-based indicators, trend strength measurement, and momentum analysis optimized for crypto market volatility.
+
+The v2 indicators implemented in this library include:
+
+- **OBV (On Balance Volume):** Volume-based momentum indicator that tracks cumulative volume flow.
+- **MFI (Money Flow Index):** Volume-weighted RSI that combines price and volume for overbought/oversold analysis.
+- **Parabolic SAR:** Trend-following indicator providing dynamic stop-loss levels and reversal signals.
+- **ADX (Average Directional Index):** Measures trend strength regardless of direction, essential for trend filtering.
+- **CCI (Commodity Channel Index):** Momentum oscillator for identifying cyclical trends and extreme conditions.
+- **Williams %R:** Momentum indicator for detecting extreme overbought/oversold conditions.
+- **Standard Deviation:** Mathematical foundation for volatility measurement and statistical analysis.
 
 Each module contains its own implementation (typically in a `main.rs` file) and associated tests (in a `__tests__.rs` or `_tests__` directory). For more details on each indicator, please refer to the documentation within the corresponding module.
 
@@ -128,4 +129,101 @@ pub mod v1 {
     }
 
     pub mod types;
+}
+
+pub mod v2 {
+    //! # Version 2 - Advanced Crypto Trading Indicators
+    //!
+    //! This module contains advanced technical indicators specifically designed for cryptocurrency
+    //! trading algorithms and sophisticated signal aggregation systems. These indicators focus on
+    //! volume analysis, trend strength measurement, and momentum detection optimized for the high
+    //! volatility environment of cryptocurrency markets.
+    //!
+    //! ## Tier 1 Indicators (Essential)
+    //! - **obv:** On Balance Volume - Critical volume-based momentum indicator
+    //! - **mfi:** Money Flow Index - Volume-weighted RSI for comprehensive market analysis
+    //!
+    //! ## Tier 2 Indicators (Highly Recommended)
+    //! - **parabolic_sar:** Parabolic SAR - Dynamic trend-following with 95% confidence level
+    //! - **adx:** Average Directional Index - Superior trend strength filtering
+    //! - **cci:** Commodity Channel Index - Effective momentum measurement for cyclical analysis
+    //!
+    //! ## Tier 3 Indicators (Supplementary)
+    //! - **williams_r:** Williams %R - Extreme condition detection for overbought/oversold analysis
+    //!
+    //! ## Mathematical Foundation
+    //! - **std_dev:** Standard Deviation - Essential statistical foundation for volatility analysis
+    //!
+    //! All indicators are designed to work together in signal aggregation systems and include
+    //! comprehensive error handling, state management, and batch processing capabilities.
+
+    /// **OBV Module**
+    ///
+    /// On Balance Volume (OBV) is a volume-based momentum indicator that tracks cumulative
+    /// volume flow to predict price movements. Essential for crypto signal validation.
+    pub mod obv {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **MFI Module**
+    ///
+    /// Money Flow Index (MFI) combines price and volume data to create a volume-weighted
+    /// version of RSI. Critical for identifying overbought/oversold conditions in crypto markets.
+    pub mod mfi {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **Parabolic SAR Module**
+    ///
+    /// Parabolic SAR (Stop and Reverse) provides dynamic trend-following signals and stop-loss
+    /// levels. Achieves 95% confidence level in crypto applications according to analysis.
+    pub mod parabolic_sar {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **ADX Module**
+    ///
+    /// Average Directional Index measures trend strength regardless of direction.
+    /// Superior trend strength filtering essential for crypto trading algorithms.
+    pub mod adx {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **CCI Module**
+    ///
+    /// Commodity Channel Index is a momentum oscillator that identifies cyclical trends
+    /// and extreme market conditions. Effective for crypto's cyclical price patterns.
+    pub mod cci {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **Williams %R Module**
+    ///
+    /// Williams %R is a momentum indicator specialized for detecting extreme overbought
+    /// and oversold conditions. Particularly effective in crypto's volatile environment.
+    pub mod williams_r {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **Standard Deviation Module**
+    ///
+    /// Standard Deviation provides the mathematical foundation for volatility measurement
+    /// and statistical analysis. Essential for Bollinger Bands and risk assessment.
+    pub mod std_dev {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
 }
