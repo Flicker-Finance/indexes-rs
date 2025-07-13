@@ -1,6 +1,6 @@
 [package]
 name = "indexes-rs"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 license = "MIT"
 authors = ["Onik Sahakyan <os@flicker.finance|onik.sahakyan.09@gmail.com>"]
@@ -15,4 +15,4 @@ rust-version = "1.70"
 
 [dependencies]
 approx = "0.5.1"
-serde = { version = "1.0.217", features = ["derive"] }
+serde = { version = "1.0.219", features = ["derive"] }

@@ -3,6 +3,9 @@
         "lookback",
         "OHLC",
         "OHLCV",
+        "Onik",
+        "Sahakyan",
+        "serde",
         "Stoch",
         "uptrending"
     ]
