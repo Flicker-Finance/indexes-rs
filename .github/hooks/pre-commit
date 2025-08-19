@@ -15,7 +15,7 @@ check_step() {
 
 # Format the code and stage changes
 echo "📝 Formatting code..."
-cargo fmt
+cargo fmt --all -- --check
 git add -u  # Stage any formatting changes
 
 # Quick compile check

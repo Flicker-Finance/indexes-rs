@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn test_true_range_calculation() {
-        let mut atr = ATR::new(14).unwrap();
+        let mut atr = ATR::new(2).unwrap();
 
         // First candle: TR = High - Low
         let result = atr.update(OHLCData::new(100.0, 95.0, 98.0));
@@ -61,10 +61,15 @@ mod tests {
         // Second candle with gap up
         // Previous close: 98.0, Current: H=105, L=102, C=104
         // TR = max(105-102, |105-98|, |102-98|) = max(3, 7, 4) = 7
-        atr.update(OHLCData::new(105.0, 102.0, 104.0));
+        // atr.update(OHLCData::new(105.0, 102.0, 104.0));
 
         // Verify the true range is calculated correctly
         // (We need to wait for initialization to see the result)
+
+        let res = atr.update(OHLCData::new(105.0, 102.0, 104.0)).unwrap();
+
+        // Initial ATR uses the first two TRs; but we can directly assert the last TR
+        assert_close(res.true_range, 7.0, EPSILON);
     }
 
     #[test]
