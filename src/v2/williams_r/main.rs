@@ -1,7 +1,4 @@
-use crate::v2::williams_r::types::{
-    WilliamsRConfig, WilliamsRError, WilliamsRInput, WilliamsRMarketCondition, WilliamsROutput,
-    WilliamsRState,
-};
+use crate::v2::williams_r::types::{WilliamsRConfig, WilliamsRError, WilliamsRInput, WilliamsRMarketCondition, WilliamsROutput, WilliamsRState};
 
 /// Williams %R Indicator
 ///
@@ -46,21 +43,12 @@ impl WilliamsR {
             return Err(WilliamsRError::InvalidPeriod);
         }
 
-        let config = WilliamsRConfig {
-            period,
-            ..Default::default()
-        };
+        let config = WilliamsRConfig { period, ..Default::default() };
         Ok(Self::with_config(config))
     }
 
     /// Create a new Williams %R calculator with custom period and thresholds
-    pub fn with_thresholds(
-        period: usize,
-        overbought: f64,
-        oversold: f64,
-        extreme_overbought: f64,
-        extreme_oversold: f64,
-    ) -> Result<Self, WilliamsRError> {
+    pub fn with_thresholds(period: usize, overbought: f64, oversold: f64, extreme_overbought: f64, extreme_oversold: f64) -> Result<Self, WilliamsRError> {
         if period == 0 {
             return Err(WilliamsRError::InvalidPeriod);
         }
@@ -135,10 +123,7 @@ impl WilliamsR {
     }
 
     /// Calculate Williams %R for a batch of inputs
-    pub fn calculate_batch(
-        &mut self,
-        inputs: &[WilliamsRInput],
-    ) -> Result<Vec<WilliamsROutput>, WilliamsRError> {
+    pub fn calculate_batch(&mut self, inputs: &[WilliamsRInput]) -> Result<Vec<WilliamsROutput>, WilliamsRError> {
         inputs.iter().map(|input| self.calculate(*input)).collect()
     }
 
@@ -169,8 +154,7 @@ impl WilliamsR {
 
     /// Check if in extreme condition
     pub fn is_extreme_condition(&self, williams_r: f64) -> bool {
-        williams_r >= self.state.config.extreme_overbought
-            || williams_r <= self.state.config.extreme_oversold
+        williams_r >= self.state.config.extreme_overbought || williams_r <= self.state.config.extreme_oversold
     }
 
     /// Get signal strength (0.0 to 1.0, where 1.0 is strongest)
@@ -247,16 +231,8 @@ impl WilliamsR {
         }
 
         // Find highest high and lowest low in the current period
-        self.state.highest_high = self
-            .state
-            .highs
-            .iter()
-            .fold(f64::NEG_INFINITY, |acc, &x| acc.max(x));
-        self.state.lowest_low = self
-            .state
-            .lows
-            .iter()
-            .fold(f64::INFINITY, |acc, &x| acc.min(x));
+        self.state.highest_high = self.state.highs.iter().fold(f64::NEG_INFINITY, |acc, &x| acc.max(x));
+        self.state.lowest_low = self.state.lows.iter().fold(f64::INFINITY, |acc, &x| acc.min(x));
     }
 
     fn calculate_williams_r_value(&self, close: f64) -> Result<f64, WilliamsRError> {
@@ -279,7 +255,7 @@ impl WilliamsR {
         }
 
         // Clamp to valid range (0 to -100)
-        Ok(williams_r.max(-100.0).min(0.0))
+        Ok(williams_r.clamp(-100.0, 0.0))
     }
 
     fn determine_market_condition(&self, williams_r: f64) -> WilliamsRMarketCondition {
@@ -306,17 +282,10 @@ impl Default for WilliamsR {
 }
 
 /// Convenience function to calculate Williams %R for HLC data without maintaining state
-pub fn calculate_williams_r_simple(
-    highs: &[f64],
-    lows: &[f64],
-    closes: &[f64],
-    period: usize,
-) -> Result<Vec<f64>, WilliamsRError> {
+pub fn calculate_williams_r_simple(highs: &[f64], lows: &[f64], closes: &[f64], period: usize) -> Result<Vec<f64>, WilliamsRError> {
     let len = highs.len();
     if len != lows.len() || len != closes.len() {
-        return Err(WilliamsRError::InvalidInput(
-            "All price arrays must have same length".to_string(),
-        ));
+        return Err(WilliamsRError::InvalidInput("All price arrays must have same length".to_string()));
     }
 
     if len == 0 {

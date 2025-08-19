@@ -27,12 +27,7 @@ mod tests {
             let result = adx.calculate(input).unwrap();
 
             // ADX should be between 0 and 100
-            assert!(
-                result.adx >= 0.0 && result.adx <= 100.0,
-                "ADX {} out of range at index {}",
-                result.adx,
-                i
-            );
+            assert!(result.adx >= 0.0 && result.adx <= 100.0, "ADX {} out of range at index {}", result.adx, i);
 
             // DI values should be between 0 and 100
             assert!(result.plus_di >= 0.0 && result.plus_di <= 100.0);
@@ -48,12 +43,7 @@ mod tests {
         let mut adx = ADX::with_period(3).unwrap();
 
         // Strong uptrend data
-        let uptrend_data = vec![
-            (10.0, 8.0, 9.0),
-            (12.0, 10.0, 11.5),
-            (14.0, 12.0, 13.5),
-            (16.0, 14.0, 15.5),
-        ];
+        let uptrend_data = vec![(10.0, 8.0, 9.0), (12.0, 10.0, 11.5), (14.0, 12.0, 13.5), (16.0, 14.0, 15.5)];
 
         let mut last_result = None;
         for (high, low, close) in uptrend_data {
@@ -98,11 +88,7 @@ mod tests {
         let mut adx = ADX::new();
 
         // First calculation
-        let input1 = ADXInput {
-            high: 10.0,
-            low: 8.0,
-            close: 9.0,
-        };
+        let input1 = ADXInput { high: 10.0, low: 8.0, close: 9.0 };
         let result1 = adx.calculate(input1).unwrap();
         assert_eq!(result1.true_range, 0.0); // First calculation
 
@@ -123,11 +109,7 @@ mod tests {
         let mut adx = ADX::new();
 
         // Test invalid HLC (high < low)
-        let input = ADXInput {
-            high: 8.0,
-            low: 10.0,
-            close: 9.0,
-        };
+        let input = ADXInput { high: 8.0, low: 10.0, close: 9.0 };
         assert!(matches!(adx.calculate(input), Err(ADXError::InvalidHLC)));
 
         // Test close out of range
@@ -162,11 +144,7 @@ mod tests {
         let mut adx = ADX::new();
 
         // Setup first point
-        let input1 = ADXInput {
-            high: 10.0,
-            low: 8.0,
-            close: 9.0,
-        };
+        let input1 = ADXInput { high: 10.0, low: 8.0, close: 9.0 };
         let _ = adx.calculate(input1).unwrap();
 
         // Up movement
@@ -194,10 +172,7 @@ mod tests {
         // In a sustained uptrend, we should eventually see +DI > -DI
         if result3.adx > 0.0 {
             // Only check if we have meaningful values
-            println!(
-                "Result: +DI={}, -DI={}, ADX={}",
-                result3.plus_di, result3.minus_di, result3.adx
-            );
+            println!("Result: +DI={}, -DI={}, ADX={}", result3.plus_di, result3.minus_di, result3.adx);
         }
     }
 }

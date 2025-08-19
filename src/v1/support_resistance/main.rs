@@ -61,7 +61,7 @@ impl SupportResistance {
     ///
     /// * `period` - The number of prices to include in the sliding window.
     /// * `threshold` - The percentage threshold (as a decimal, e.g. 0.02 for 2%)
-    ///                 to determine swing levels.
+    ///   to determine swing levels.
     pub fn new(period: usize, threshold: f64) -> Self {
         SupportResistance {
             period,

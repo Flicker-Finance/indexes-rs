@@ -27,10 +27,7 @@ mod tests {
         ];
 
         for (i, (close, volume)) in test_cases.iter().enumerate() {
-            let input = OBVInput {
-                close: *close,
-                volume: *volume,
-            };
+            let input = OBVInput { close: *close, volume: *volume };
             let result = obv.calculate(input).unwrap();
             assert_eq!(result.obv, expected_obv[i], "Failed at index {}", i);
         }
@@ -40,31 +37,19 @@ mod tests {
     fn test_obv_flow_direction() {
         let mut obv = OBV::new();
 
-        let input1 = OBVInput {
-            close: 100.0,
-            volume: 1000.0,
-        };
+        let input1 = OBVInput { close: 100.0, volume: 1000.0 };
         let result1 = obv.calculate(input1).unwrap();
         assert_eq!(result1.flow_direction, 0.0); // First calculation
 
-        let input2 = OBVInput {
-            close: 105.0,
-            volume: 1500.0,
-        };
+        let input2 = OBVInput { close: 105.0, volume: 1500.0 };
         let result2 = obv.calculate(input2).unwrap();
         assert_eq!(result2.flow_direction, 1.0); // Up
 
-        let input3 = OBVInput {
-            close: 103.0,
-            volume: 1200.0,
-        };
+        let input3 = OBVInput { close: 103.0, volume: 1200.0 };
         let result3 = obv.calculate(input3).unwrap();
         assert_eq!(result3.flow_direction, -1.0); // Down
 
-        let input4 = OBVInput {
-            close: 103.0,
-            volume: 800.0,
-        };
+        let input4 = OBVInput { close: 103.0, volume: 800.0 };
         let result4 = obv.calculate(input4).unwrap();
         assert_eq!(result4.flow_direction, 0.0); // Unchanged
     }
@@ -85,20 +70,11 @@ mod tests {
         let mut obv = OBV::new();
 
         // Test negative volume
-        let input = OBVInput {
-            close: 100.0,
-            volume: -1000.0,
-        };
-        assert!(matches!(
-            obv.calculate(input),
-            Err(OBVError::NegativeVolume)
-        ));
+        let input = OBVInput { close: 100.0, volume: -1000.0 };
+        assert!(matches!(obv.calculate(input), Err(OBVError::NegativeVolume)));
 
         // Test invalid price
-        let input = OBVInput {
-            close: f64::NAN,
-            volume: 1000.0,
-        };
+        let input = OBVInput { close: f64::NAN, volume: 1000.0 };
         assert!(matches!(obv.calculate(input), Err(OBVError::InvalidPrice)));
     }
 }

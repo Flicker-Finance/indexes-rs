@@ -35,7 +35,7 @@ Currently supported technical indicators:
 Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
-indexes-rs = "1.0.1"
+indexes-rs = "1.1.0"
 ```
 
 Basic example:

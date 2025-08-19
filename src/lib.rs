@@ -226,4 +226,32 @@ pub mod v2 {
         pub mod main;
         pub mod types;
     }
+
+    /// **ATR(v2) Module**
+    ///
+    /// Provides an implementation of the Average True Range (ATR) indicator with OHLC.
+    pub mod atr {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **Stochastic(v2) Oscillator Module**
+    ///
+    /// Implements the Stochastic Oscillator indicator with OHLC.
+    pub mod stochastic {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
+
+    /// **Support Resistance Module**
+    ///
+    /// Implements a fractal-based Support and Resistance level identifier
+    /// using High and Low price data.
+    pub mod support_resistance {
+        mod __tests__;
+        pub mod main;
+        pub mod types;
+    }
 }

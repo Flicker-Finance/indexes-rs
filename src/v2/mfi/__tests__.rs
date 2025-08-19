@@ -18,12 +18,7 @@ mod tests {
         ];
 
         for (high, low, close, volume) in test_data {
-            let input = MFIInput {
-                high,
-                low,
-                close,
-                volume,
-            };
+            let input = MFIInput { high, low, close, volume };
             let result = mfi.calculate(input).unwrap();
 
             // MFI should be between 0 and 100
@@ -119,10 +114,7 @@ mod tests {
             close: 9.0,
             volume: -1000.0,
         };
-        assert!(matches!(
-            mfi.calculate(input),
-            Err(MFIError::NegativeVolume)
-        ));
+        assert!(matches!(mfi.calculate(input), Err(MFIError::NegativeVolume)));
 
         // Test invalid period
         assert!(matches!(MFI::with_period(0), Err(MFIError::InvalidPeriod)));

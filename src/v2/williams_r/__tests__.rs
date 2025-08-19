@@ -70,11 +70,7 @@ mod tests {
 
         // Test oversold condition (close near lowest low)
         // Using a close near the lowest low should give Williams %R near -100 (oversold)
-        let oversold_input = WilliamsRInput {
-            high: 9.0,
-            low: 7.0,
-            close: 7.2,
-        };
+        let oversold_input = WilliamsRInput { high: 9.0, low: 7.0, close: 7.2 };
         let oversold_result = williams_r.calculate(oversold_input).unwrap();
 
         // Should be oversold (close to -100)
@@ -104,12 +100,7 @@ mod tests {
 
         // Williams %R = (16 - 12) / (16 - 9) × -100 = 4/7 × -100 ≈ -57.14
         let expected = ((16.0 - 12.0) / (16.0 - 9.0)) * -100.0;
-        assert!(
-            (result.williams_r - expected).abs() < 0.01,
-            "Expected {}, got {}",
-            expected,
-            result.williams_r
-        );
+        assert!((result.williams_r - expected).abs() < 0.01, "Expected {}, got {}", expected, result.williams_r);
     }
 
     #[test]
@@ -175,15 +166,8 @@ mod tests {
         let mut williams_r = WilliamsR::new();
 
         // Test invalid HLC (high < low)
-        let input = WilliamsRInput {
-            high: 8.0,
-            low: 10.0,
-            close: 9.0,
-        };
-        assert!(matches!(
-            williams_r.calculate(input),
-            Err(WilliamsRError::InvalidHLC)
-        ));
+        let input = WilliamsRInput { high: 8.0, low: 10.0, close: 9.0 };
+        assert!(matches!(williams_r.calculate(input), Err(WilliamsRError::InvalidHLC)));
 
         // Test close out of range
         let input = WilliamsRInput {
@@ -191,22 +175,13 @@ mod tests {
             low: 8.0,
             close: 12.0,
         };
-        assert!(matches!(
-            williams_r.calculate(input),
-            Err(WilliamsRError::InvalidHLC)
-        ));
+        assert!(matches!(williams_r.calculate(input), Err(WilliamsRError::InvalidHLC)));
 
         // Test invalid period
-        assert!(matches!(
-            WilliamsR::with_period(0),
-            Err(WilliamsRError::InvalidPeriod)
-        ));
+        assert!(matches!(WilliamsR::with_period(0), Err(WilliamsRError::InvalidPeriod)));
 
         // Test invalid thresholds (positive values)
-        assert!(matches!(
-            WilliamsR::with_thresholds(14, 20.0, -80.0, -10.0, -90.0),
-            Err(WilliamsRError::InvalidThresholds)
-        ));
+        assert!(matches!(WilliamsR::with_thresholds(14, 20.0, -80.0, -10.0, -90.0), Err(WilliamsRError::InvalidThresholds)));
     }
 
     #[test]
@@ -229,16 +204,9 @@ mod tests {
         let mut williams_r = WilliamsR::with_period(2).unwrap();
 
         // Test insufficient data
-        let input1 = WilliamsRInput {
-            high: 10.0,
-            low: 8.0,
-            close: 9.0,
-        };
+        let input1 = WilliamsRInput { high: 10.0, low: 8.0, close: 9.0 };
         let result1 = williams_r.calculate(input1).unwrap();
-        assert_eq!(
-            result1.market_condition,
-            WilliamsRMarketCondition::Insufficient
-        );
+        assert_eq!(result1.market_condition, WilliamsRMarketCondition::Insufficient);
 
         // Add more data to get sufficient data
         let input2 = WilliamsRInput {
@@ -247,9 +215,6 @@ mod tests {
             close: 11.0,
         };
         let result2 = williams_r.calculate(input2).unwrap();
-        assert_ne!(
-            result2.market_condition,
-            WilliamsRMarketCondition::Insufficient
-        );
+        assert_ne!(result2.market_condition, WilliamsRMarketCondition::Insufficient);
     }
 }

@@ -1,6 +1,4 @@
-use crate::v2::cci::types::{
-    CCIConfig, CCIError, CCIInput, CCIMarketCondition, CCIOutput, CCIState,
-};
+use crate::v2::cci::types::{CCIConfig, CCIError, CCIInput, CCIMarketCondition, CCIOutput, CCIState};
 
 /// Commodity Channel Index (CCI) Indicator
 ///
@@ -36,29 +34,17 @@ impl CCI {
             return Err(CCIError::InvalidPeriod);
         }
 
-        let config = CCIConfig {
-            period,
-            ..Default::default()
-        };
+        let config = CCIConfig { period, ..Default::default() };
         Ok(Self::with_config(config))
     }
 
     /// Create a new CCI calculator with custom period and thresholds
-    pub fn with_thresholds(
-        period: usize,
-        overbought: f64,
-        oversold: f64,
-        extreme_overbought: f64,
-        extreme_oversold: f64,
-    ) -> Result<Self, CCIError> {
+    pub fn with_thresholds(period: usize, overbought: f64, oversold: f64, extreme_overbought: f64, extreme_oversold: f64) -> Result<Self, CCIError> {
         if period == 0 {
             return Err(CCIError::InvalidPeriod);
         }
 
-        if overbought <= oversold
-            || extreme_overbought <= overbought
-            || extreme_oversold >= oversold
-        {
+        if overbought <= oversold || extreme_overbought <= overbought || extreme_oversold >= oversold {
             return Err(CCIError::InvalidThresholds);
         }
 
@@ -74,9 +60,7 @@ impl CCI {
 
     /// Create a new CCI calculator with custom configuration
     pub fn with_config(config: CCIConfig) -> Self {
-        Self {
-            state: CCIState::new(config),
-        }
+        Self { state: CCIState::new(config) }
     }
 
     /// Calculate CCI for the given input
@@ -185,10 +169,7 @@ impl CCI {
         }
 
         let config = &self.state.config;
-        if config.overbought <= config.oversold
-            || config.extreme_overbought <= config.overbought
-            || config.extreme_oversold >= config.oversold
-        {
+        if config.overbought <= config.oversold || config.extreme_overbought <= config.overbought || config.extreme_oversold >= config.oversold {
             return Err(CCIError::InvalidThresholds);
         }
 
@@ -212,8 +193,7 @@ impl CCI {
         self.state.tp_sum += typical_price;
 
         // Check if we have sufficient data
-        self.state.has_sufficient_data =
-            self.state.typical_prices.len() >= self.state.config.period;
+        self.state.has_sufficient_data = self.state.typical_prices.len() >= self.state.config.period;
     }
 
     fn calculate_cci_value(&self, current_tp: f64) -> Result<(f64, f64, f64), CCIError> {
@@ -244,12 +224,7 @@ impl CCI {
     }
 
     fn calculate_mean_deviation(&self, sma_tp: f64) -> f64 {
-        let sum_deviations: f64 = self
-            .state
-            .typical_prices
-            .iter()
-            .map(|&tp| (tp - sma_tp).abs())
-            .sum();
+        let sum_deviations: f64 = self.state.typical_prices.iter().map(|&tp| (tp - sma_tp).abs()).sum();
 
         sum_deviations / self.state.config.period as f64
     }
@@ -278,17 +253,10 @@ impl Default for CCI {
 }
 
 /// Convenience function to calculate CCI for HLC data without maintaining state
-pub fn calculate_cci_simple(
-    highs: &[f64],
-    lows: &[f64],
-    closes: &[f64],
-    period: usize,
-) -> Result<Vec<f64>, CCIError> {
+pub fn calculate_cci_simple(highs: &[f64], lows: &[f64], closes: &[f64], period: usize) -> Result<Vec<f64>, CCIError> {
     let len = highs.len();
     if len != lows.len() || len != closes.len() {
-        return Err(CCIError::InvalidInput(
-            "All price arrays must have same length".to_string(),
-        ));
+        return Err(CCIError::InvalidInput("All price arrays must have same length".to_string()));
     }
 
     if len == 0 {

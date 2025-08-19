@@ -1,7 +1,4 @@
-use crate::v2::adx::types::{
-    ADXConfig, ADXError, ADXInput, ADXOutput, ADXPeriodData, ADXState, TrendDirection,
-    TrendStrength,
-};
+use crate::v2::adx::types::{ADXConfig, ADXError, ADXInput, ADXOutput, ADXPeriodData, ADXState, TrendDirection, TrendStrength};
 
 /// Average Directional Index (ADX) Indicator
 ///
@@ -56,9 +53,7 @@ impl ADX {
 
     /// Create a new ADX calculator with custom configuration
     pub fn with_config(config: ADXConfig) -> Self {
-        Self {
-            state: ADXState::new(config),
-        }
+        Self { state: ADXState::new(config) }
     }
 
     /// Calculate ADX for the given input
@@ -136,8 +131,7 @@ impl ADX {
             return Err(ADXError::InvalidPeriod);
         }
 
-        if self.state.config.strong_trend_threshold >= self.state.config.very_strong_trend_threshold
-        {
+        if self.state.config.strong_trend_threshold >= self.state.config.very_strong_trend_threshold {
             return Err(ADXError::InvalidThresholds);
         }
 
@@ -239,23 +233,13 @@ impl ADX {
     }
 
     fn calculate_directional_movements(&self, input: &ADXInput) -> (f64, f64) {
-        if let (Some(prev_high), Some(prev_low)) =
-            (self.state.previous_high, self.state.previous_low)
-        {
+        if let (Some(prev_high), Some(prev_low)) = (self.state.previous_high, self.state.previous_low) {
             let up_move = input.high - prev_high;
             let down_move = prev_low - input.low;
 
-            let plus_dm = if up_move > down_move && up_move > 0.0 {
-                up_move
-            } else {
-                0.0
-            };
+            let plus_dm = if up_move > down_move && up_move > 0.0 { up_move } else { 0.0 };
 
-            let minus_dm = if down_move > up_move && down_move > 0.0 {
-                down_move
-            } else {
-                0.0
-            };
+            let minus_dm = if down_move > up_move && down_move > 0.0 { down_move } else { 0.0 };
 
             (plus_dm, minus_dm)
         } else {
@@ -295,22 +279,16 @@ impl ADX {
         }
 
         if let Some(smoothed_plus_dm) = self.state.smoothed_plus_dm {
-            self.state.smoothed_plus_dm =
-                Some((smoothed_plus_dm * (period - 1.0) + plus_dm) / period);
+            self.state.smoothed_plus_dm = Some((smoothed_plus_dm * (period - 1.0) + plus_dm) / period);
         }
 
         if let Some(smoothed_minus_dm) = self.state.smoothed_minus_dm {
-            self.state.smoothed_minus_dm =
-                Some((smoothed_minus_dm * (period - 1.0) + minus_dm) / period);
+            self.state.smoothed_minus_dm = Some((smoothed_minus_dm * (period - 1.0) + minus_dm) / period);
         }
     }
 
     fn calculate_directional_indicators(&self) -> (f64, f64) {
-        if let (Some(smoothed_tr), Some(smoothed_plus_dm), Some(smoothed_minus_dm)) = (
-            self.state.smoothed_tr,
-            self.state.smoothed_plus_dm,
-            self.state.smoothed_minus_dm,
-        ) {
+        if let (Some(smoothed_tr), Some(smoothed_plus_dm), Some(smoothed_minus_dm)) = (self.state.smoothed_tr, self.state.smoothed_plus_dm, self.state.smoothed_minus_dm) {
             if smoothed_tr != 0.0 {
                 let plus_di = (smoothed_plus_dm / smoothed_tr) * 100.0;
                 let minus_di = (smoothed_minus_dm / smoothed_tr) * 100.0;
@@ -344,8 +322,7 @@ impl ADX {
         if self.state.dx_history.len() >= self.state.config.adx_smoothing {
             if !self.state.has_adx_data {
                 // First ADX calculation - simple average
-                let adx =
-                    self.state.dx_history.iter().sum::<f64>() / self.state.dx_history.len() as f64;
+                let adx = self.state.dx_history.iter().sum::<f64>() / self.state.dx_history.len() as f64;
                 self.state.current_adx = Some(adx);
                 self.state.has_adx_data = true;
                 adx
@@ -395,17 +372,10 @@ impl Default for ADX {
 }
 
 /// Convenience function to calculate ADX for HLC data without maintaining state
-pub fn calculate_adx_simple(
-    highs: &[f64],
-    lows: &[f64],
-    closes: &[f64],
-    period: usize,
-) -> Result<Vec<f64>, ADXError> {
+pub fn calculate_adx_simple(highs: &[f64], lows: &[f64], closes: &[f64], period: usize) -> Result<Vec<f64>, ADXError> {
     let len = highs.len();
     if len != lows.len() || len != closes.len() {
-        return Err(ADXError::InvalidInput(
-            "All price arrays must have same length".to_string(),
-        ));
+        return Err(ADXError::InvalidInput("All price arrays must have same length".to_string()));
     }
 
     if len == 0 {

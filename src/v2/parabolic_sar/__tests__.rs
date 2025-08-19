@@ -36,13 +36,7 @@ mod tests {
         for (i, result) in results.iter().enumerate().skip(2) {
             if matches!(result.trend, TrendDirection::Up) {
                 // SAR should be below current low in uptrend
-                assert!(
-                    result.sar <= test_data[i].1,
-                    "SAR {} should be <= low {} at index {}",
-                    result.sar,
-                    test_data[i].1,
-                    i
-                );
+                assert!(result.sar <= test_data[i].1, "SAR {} should be <= low {} at index {}", result.sar, test_data[i].1, i);
             }
         }
     }
@@ -78,10 +72,7 @@ mod tests {
 
         // Check that we eventually get a trend reversal
         let has_reversal = results.iter().any(|r| r.trend_reversal);
-        assert!(
-            has_reversal,
-            "Expected at least one trend reversal in the data"
-        );
+        assert!(has_reversal, "Expected at least one trend reversal in the data");
 
         // The reversal should happen when the low crosses below the SAR
         // Find the reversal and verify it makes sense
@@ -135,26 +126,14 @@ mod tests {
             low: 10.0,
             close: None,
         };
-        assert!(matches!(
-            sar.calculate(input),
-            Err(ParabolicSARError::InvalidHL)
-        ));
+        assert!(matches!(sar.calculate(input), Err(ParabolicSARError::InvalidHL)));
 
         // Test invalid acceleration parameters
-        assert!(matches!(
-            ParabolicSAR::with_acceleration(0.0, 0.02, 0.20),
-            Err(ParabolicSARError::InvalidAcceleration)
-        ));
+        assert!(matches!(ParabolicSAR::with_acceleration(0.0, 0.02, 0.20), Err(ParabolicSARError::InvalidAcceleration)));
 
-        assert!(matches!(
-            ParabolicSAR::with_acceleration(0.02, 0.0, 0.20),
-            Err(ParabolicSARError::InvalidAcceleration)
-        ));
+        assert!(matches!(ParabolicSAR::with_acceleration(0.02, 0.0, 0.20), Err(ParabolicSARError::InvalidAcceleration)));
 
-        assert!(matches!(
-            ParabolicSAR::with_acceleration(0.20, 0.02, 0.10),
-            Err(ParabolicSARError::InvalidAcceleration)
-        ));
+        assert!(matches!(ParabolicSAR::with_acceleration(0.20, 0.02, 0.10), Err(ParabolicSARError::InvalidAcceleration)));
     }
 
     #[test]
@@ -176,20 +155,10 @@ mod tests {
         let mut sar = ParabolicSAR::new();
 
         // Strong uptrend data
-        let uptrend_data = vec![
-            (10.0, 8.0),
-            (11.0, 9.0),
-            (12.0, 10.0),
-            (13.0, 11.0),
-            (14.0, 12.0),
-        ];
+        let uptrend_data = vec![(10.0, 8.0), (11.0, 9.0), (12.0, 10.0), (13.0, 11.0), (14.0, 12.0)];
 
         for (high, low) in uptrend_data {
-            let input = ParabolicSARInput {
-                high,
-                low,
-                close: None,
-            };
+            let input = ParabolicSARInput { high, low, close: None };
             let result = sar.calculate(input).unwrap();
 
             // After the first two setup periods, should be in uptrend
