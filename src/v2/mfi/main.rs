@@ -1,6 +1,4 @@
-use crate::v2::mfi::types::{
-    MFIConfig, MFIError, MFIInput, MFIMarketCondition, MFIOutput, MFIState, MoneyFlow,
-};
+use crate::v2::mfi::types::{MFIConfig, MFIError, MFIInput, MFIMarketCondition, MFIOutput, MFIState, MoneyFlow};
 
 /// Money Flow Index (MFI) Indicator
 ///
@@ -29,18 +27,13 @@ impl MFI {
             return Err(MFIError::InvalidPeriod);
         }
 
-        let config = MFIConfig {
-            period,
-            ..Default::default()
-        };
+        let config = MFIConfig { period, ..Default::default() };
         Ok(Self::with_config(config))
     }
 
     /// Create a new MFI calculator with custom configuration
     pub fn with_config(config: MFIConfig) -> Self {
-        Self {
-            state: MFIState::new(config),
-        }
+        Self { state: MFIState::new(config) }
     }
 
     /// Calculate MFI for the given input
@@ -247,18 +240,10 @@ impl Default for MFI {
 }
 
 /// Convenience function to calculate MFI for OHLCV data without maintaining state
-pub fn calculate_mfi_simple(
-    highs: &[f64],
-    lows: &[f64],
-    closes: &[f64],
-    volumes: &[f64],
-    period: usize,
-) -> Result<Vec<f64>, MFIError> {
+pub fn calculate_mfi_simple(highs: &[f64], lows: &[f64], closes: &[f64], volumes: &[f64], period: usize) -> Result<Vec<f64>, MFIError> {
     let len = highs.len();
     if len != lows.len() || len != closes.len() || len != volumes.len() {
-        return Err(MFIError::InvalidInput(
-            "All price and volume arrays must have same length".to_string(),
-        ));
+        return Err(MFIError::InvalidInput("All price and volume arrays must have same length".to_string()));
     }
 
     if len == 0 {

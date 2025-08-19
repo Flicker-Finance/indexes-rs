@@ -7,13 +7,7 @@ mod tests {
     const EPSILON: f64 = 0.001;
 
     fn assert_close(a: f64, b: f64, epsilon: f64) {
-        assert!(
-            (a - b).abs() < epsilon,
-            "Values not close: {} vs {}, diff: {}",
-            a,
-            b,
-            (a - b).abs()
-        );
+        assert!((a - b).abs() < epsilon, "Values not close: {} vs {}, diff: {}", a, b, (a - b).abs());
     }
 
     #[test]
@@ -26,18 +20,9 @@ mod tests {
 
     #[test]
     fn test_invalid_parameters() {
-        assert!(matches!(
-            StochasticOscillator::new(0, 3, 3),
-            Err(StochasticError::InvalidPeriod)
-        ));
-        assert!(matches!(
-            StochasticOscillator::new(14, 0, 3),
-            Err(StochasticError::InvalidSmoothingPeriod)
-        ));
-        assert!(matches!(
-            StochasticOscillator::new(14, 3, 0),
-            Err(StochasticError::InvalidSmoothingPeriod)
-        ));
+        assert!(matches!(StochasticOscillator::new(0, 3, 3), Err(StochasticError::InvalidPeriod)));
+        assert!(matches!(StochasticOscillator::new(14, 0, 3), Err(StochasticError::InvalidSmoothingPeriod)));
+        assert!(matches!(StochasticOscillator::new(14, 3, 0), Err(StochasticError::InvalidSmoothingPeriod)));
     }
 
     #[test]
@@ -45,7 +30,7 @@ mod tests {
         let mut stoch = StochasticOscillator::new(5, 1, 3).unwrap(); // No K smoothing for simplicity
 
         // Create data where we know the expected result
-        let data = vec![
+        let data = [
             OHLCData::new(10.0, 8.0, 9.0),
             OHLCData::new(11.0, 9.0, 10.0),
             OHLCData::new(12.0, 10.0, 11.0),
@@ -73,29 +58,37 @@ mod tests {
         let mut stoch = StochasticOscillator::new(3, 3, 3).unwrap();
 
         // Data designed for easy calculation
-        let data = vec![
+        let data = [
             OHLCData::new(10.0, 5.0, 7.0), // Raw K will be calculated from these
             OHLCData::new(12.0, 6.0, 9.0),
-            OHLCData::new(15.0, 8.0, 12.0), // H:15, L:5, C:12 -> K = 70%
-            OHLCData::new(14.0, 10.0, 11.0), // H:15, L:6, C:11 -> K = 55.55%
-            OHLCData::new(13.0, 9.0, 10.0), // H:15, L:8, C:10 -> K = 28.57%
+            OHLCData::new(15.0, 8.0, 12.0),  // H:15, L:5, C:12 -> Raw K = 70%
+            OHLCData::new(14.0, 10.0, 11.0), // H:15, L:6, C:11 -> Raw K = 55.55%
+            OHLCData::new(13.0, 9.0, 10.0),  // H:15, L:8, C:10 -> Raw K = 28.57%
         ];
 
-        // Need at least 3 for first calculation
-        stoch.update(data[0]);
-        stoch.update(data[1]);
-        let result = stoch.update(data[2]);
+        // First two updates - no result yet (need at least period=3)
+        assert!(stoch.update(data[0]).is_none());
+        assert!(stoch.update(data[1]).is_none());
 
-        // Should have a result after period is filled
-        assert!(result.is_some());
+        // Third update - period requirement met, but only 1 raw K value
+        // Need k_smooth=3 raw K values for smoothing
+        assert!(stoch.update(data[2]).is_none());
 
-        // Continue and check smoothing
-        stoch.update(data[3]);
+        // Fourth update - have 2 raw K values, still need 3 for smoothing
+        assert!(stoch.update(data[3]).is_none());
+
+        // Fifth update - finally have 3 raw K values, can calculate smoothed K
         let result = stoch.update(data[4]);
         assert!(result.is_some());
 
-        // K should be smoothed over 3 periods
-        // D should be average of K values
+        // Verify the smoothed K calculation
+        // Raw K values: 70%, 55.55%, 28.57%
+        // Smoothed K = (70 + 55.55 + 28.57) / 3 ≈ 51.37%
+        let values = result.unwrap();
+        assert!((values.k - 51.37).abs() < 0.1);
+
+        // D should equal K since we only have one K value so far
+        assert!((values.d - values.k).abs() < 0.001);
     }
 
     #[test]
@@ -135,15 +128,9 @@ mod tests {
 
         // Check signal logic
         if result.k > result.d {
-            assert!(matches!(
-                signal,
-                StochasticSignal::Bullish | StochasticSignal::Overbought
-            ));
+            assert!(matches!(signal, StochasticSignal::Bullish | StochasticSignal::Overbought));
         } else if result.k < result.d {
-            assert!(matches!(
-                signal,
-                StochasticSignal::Bearish | StochasticSignal::Oversold
-            ));
+            assert!(matches!(signal, StochasticSignal::Bearish | StochasticSignal::Oversold));
         }
     }
 
@@ -157,9 +144,7 @@ mod tests {
         assert!(stoch.update(OHLCData::new(10.0, 10.0, f64::NAN)).is_none());
 
         // Infinite values
-        assert!(stoch
-            .update(OHLCData::new(f64::INFINITY, 10.0, 10.0))
-            .is_none());
+        assert!(stoch.update(OHLCData::new(f64::INFINITY, 10.0, 10.0)).is_none());
 
         // Invalid OHLC (high < low)
         assert!(stoch.update(OHLCData::new(10.0, 15.0, 12.0)).is_none());
@@ -276,10 +261,7 @@ mod tests {
         }
 
         let uptrend_result = stoch.value().unwrap();
-        assert!(
-            uptrend_result.k > 70.0,
-            "Uptrend should show high stochastic"
-        );
+        assert!(uptrend_result.k > 70.0, "Uptrend should show high stochastic");
 
         // Simulate downtrend
         for i in 0..20 {
@@ -291,9 +273,6 @@ mod tests {
         }
 
         let downtrend_result = stoch.value().unwrap();
-        assert!(
-            downtrend_result.k < 30.0,
-            "Downtrend should show low stochastic"
-        );
+        assert!(downtrend_result.k < 30.0, "Downtrend should show low stochastic");
     }
 }

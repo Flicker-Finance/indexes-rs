@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e  # Exit on any error
+
+echo "🚀 Quick pre-commit check..."
+
+# Function to check if command succeeded
+check_step() {
+  if [ $? -ne 0 ]; then
+    echo "❌ $1 step failed."
+    exit 1
+  else
+    echo "✅ $1 step passed."
+  fi
+}
+
+# Format the code and stage changes
+echo "📝 Formatting code..."
+cargo fmt
+git add -u  # Stage any formatting changes
+
+# Quick compile check
+echo "🔧 Checking if code compiles..."
+cargo check --quiet
+check_step "Compile check"
+
+# Basic clippy for obvious issues
+echo "🔍 Quick lint check..."
+cargo clippy --quiet
+check_step "Lint check"
+
+# Run tests
+echo "🧪 Running tests..."
+cargo test --quiet
+check_step "Tests"
+
+echo "✨ All good! Code is formatted, compiles, and tests pass."
+exit 0

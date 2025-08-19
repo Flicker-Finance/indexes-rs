@@ -1,7 +1,4 @@
-use crate::v2::parabolic_sar::types::{
-    ParabolicSARConfig, ParabolicSARError, ParabolicSARInput, ParabolicSAROutput,
-    ParabolicSARState, TrendDirection,
-};
+use crate::v2::parabolic_sar::types::{ParabolicSARConfig, ParabolicSARError, ParabolicSARInput, ParabolicSAROutput, ParabolicSARState, TrendDirection};
 
 /// Parabolic SAR (Stop and Reverse) Indicator
 ///
@@ -26,11 +23,7 @@ impl ParabolicSAR {
     }
 
     /// Create a new Parabolic SAR calculator with custom acceleration parameters
-    pub fn with_acceleration(
-        start: f64,
-        increment: f64,
-        maximum: f64,
-    ) -> Result<Self, ParabolicSARError> {
+    pub fn with_acceleration(start: f64, increment: f64, maximum: f64) -> Result<Self, ParabolicSARError> {
         let config = ParabolicSARConfig {
             acceleration_start: start,
             acceleration_increment: increment,
@@ -53,10 +46,7 @@ impl ParabolicSAR {
     }
 
     /// Calculate Parabolic SAR for the given input
-    pub fn calculate(
-        &mut self,
-        input: ParabolicSARInput,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    pub fn calculate(&mut self, input: ParabolicSARInput) -> Result<ParabolicSAROutput, ParabolicSARError> {
         // Validate input
         self.validate_input(&input)?;
         self.validate_config()?;
@@ -76,10 +66,7 @@ impl ParabolicSAR {
     }
 
     /// Calculate Parabolic SAR for a batch of inputs
-    pub fn calculate_batch(
-        &mut self,
-        inputs: &[ParabolicSARInput],
-    ) -> Result<Vec<ParabolicSAROutput>, ParabolicSARError> {
+    pub fn calculate_batch(&mut self, inputs: &[ParabolicSARInput]) -> Result<Vec<ParabolicSAROutput>, ParabolicSARError> {
         inputs.iter().map(|input| self.calculate(*input)).collect()
     }
 
@@ -137,20 +124,14 @@ impl ParabolicSAR {
     fn validate_config(&self) -> Result<(), ParabolicSARError> {
         let config = &self.state.config;
 
-        if config.acceleration_start <= 0.0
-            || config.acceleration_increment <= 0.0
-            || config.acceleration_maximum <= config.acceleration_start
-        {
+        if config.acceleration_start <= 0.0 || config.acceleration_increment <= 0.0 || config.acceleration_maximum <= config.acceleration_start {
             return Err(ParabolicSARError::InvalidAcceleration);
         }
 
         Ok(())
     }
 
-    fn handle_first_calculation(
-        &mut self,
-        input: ParabolicSARInput,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    fn handle_first_calculation(&mut self, input: ParabolicSARInput) -> Result<ParabolicSAROutput, ParabolicSARError> {
         // First calculation - just store data, no SAR yet
         // Initial trend determination will happen on second calculation
         self.state.is_first = false;
@@ -166,10 +147,7 @@ impl ParabolicSAR {
         })
     }
 
-    fn handle_second_calculation(
-        &mut self,
-        input: ParabolicSARInput,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    fn handle_second_calculation(&mut self, input: ParabolicSARInput) -> Result<ParabolicSAROutput, ParabolicSARError> {
         // Second calculation - determine initial trend and set initial SAR
         self.state.is_second = false;
 
@@ -177,11 +155,7 @@ impl ParabolicSAR {
         let prev_low = self.state.previous_low.unwrap();
 
         // Determine initial trend direction
-        let trend = if input.high > prev_high {
-            TrendDirection::Up
-        } else {
-            TrendDirection::Down
-        };
+        let trend = if input.high > prev_high { TrendDirection::Up } else { TrendDirection::Down };
 
         // Set initial SAR and extreme point
         let (sar, extreme_point) = match trend {
@@ -204,10 +178,7 @@ impl ParabolicSAR {
         })
     }
 
-    fn handle_normal_calculation(
-        &mut self,
-        input: ParabolicSARInput,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    fn handle_normal_calculation(&mut self, input: ParabolicSARInput) -> Result<ParabolicSAROutput, ParabolicSARError> {
         let current_trend = self.state.trend.unwrap();
         let current_sar = self.state.current_sar.unwrap();
         let current_ep = self.state.extreme_point.unwrap();
@@ -225,12 +196,7 @@ impl ParabolicSAR {
         }
     }
 
-    fn handle_trend_reversal(
-        &mut self,
-        input: ParabolicSARInput,
-        old_trend: TrendDirection,
-        old_ep: f64,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    fn handle_trend_reversal(&mut self, input: ParabolicSARInput, old_trend: TrendDirection, old_ep: f64) -> Result<ParabolicSAROutput, ParabolicSARError> {
         // Trend reversal - flip direction
         let new_trend = match old_trend {
             TrendDirection::Up => TrendDirection::Down,
@@ -263,13 +229,7 @@ impl ParabolicSAR {
         })
     }
 
-    fn handle_trend_continuation(
-        &mut self,
-        input: ParabolicSARInput,
-        trend: TrendDirection,
-        current_sar: f64,
-        current_ep: f64,
-    ) -> Result<ParabolicSAROutput, ParabolicSARError> {
+    fn handle_trend_continuation(&mut self, input: ParabolicSARInput, trend: TrendDirection, current_sar: f64, current_ep: f64) -> Result<ParabolicSAROutput, ParabolicSARError> {
         // Check if we have a new extreme point
         let (new_ep, ep_updated) = match trend {
             TrendDirection::Up => {
@@ -290,9 +250,7 @@ impl ParabolicSAR {
 
         // Update acceleration factor if we have a new extreme point
         if ep_updated {
-            self.state.acceleration_factor = (self.state.acceleration_factor
-                + self.state.config.acceleration_increment)
-                .min(self.state.config.acceleration_maximum);
+            self.state.acceleration_factor = (self.state.acceleration_factor + self.state.config.acceleration_increment).min(self.state.config.acceleration_maximum);
         }
 
         // Calculate new SAR
@@ -350,9 +308,7 @@ pub fn calculate_parabolic_sar_simple(
     acceleration_maximum: Option<f64>,
 ) -> Result<Vec<f64>, ParabolicSARError> {
     if highs.len() != lows.len() {
-        return Err(ParabolicSARError::InvalidInput(
-            "Highs and lows must have same length".to_string(),
-        ));
+        return Err(ParabolicSARError::InvalidInput("Highs and lows must have same length".to_string()));
     }
 
     if highs.is_empty() {

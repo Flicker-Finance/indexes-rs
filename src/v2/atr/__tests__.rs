@@ -6,13 +6,7 @@ mod tests {
     const EPSILON: f64 = 0.0001;
 
     fn assert_close(a: f64, b: f64, epsilon: f64) {
-        assert!(
-            (a - b).abs() < epsilon,
-            "Values not close: {} vs {}, diff: {}",
-            a,
-            b,
-            (a - b).abs()
-        );
+        assert!((a - b).abs() < epsilon, "Values not close: {} vs {}, diff: {}", a, b, (a - b).abs());
     }
 
     #[test]
@@ -107,9 +101,7 @@ mod tests {
         assert!(atr.update(OHLCData::new(10.0, 10.0, f64::NAN)).is_none());
 
         // Infinite values
-        assert!(atr
-            .update(OHLCData::new(f64::INFINITY, 10.0, 10.0))
-            .is_none());
+        assert!(atr.update(OHLCData::new(f64::INFINITY, 10.0, 10.0)).is_none());
 
         // Invalid OHLC (high < low)
         assert!(atr.update(OHLCData::new(10.0, 15.0, 12.0)).is_none());
@@ -199,14 +191,8 @@ mod tests {
         // Actually, TR = max(115-110=5, |115-101.3|=13.7, |110-101.3|=8.7) = 13.7
         // new_atr = (2.0 * 13 + 13.7) / 14 = 39.7 / 14 ≈ 2.84
 
-        assert!(
-            result.atr != initial_atr,
-            "ATR should change with different volatility"
-        );
-        assert!(
-            result.atr > initial_atr,
-            "ATR should increase with higher volatility"
-        );
+        assert!(result.atr != initial_atr, "ATR should change with different volatility");
+        assert!(result.atr > initial_atr, "ATR should increase with higher volatility");
     }
 
     #[test]
@@ -252,24 +238,15 @@ mod tests {
 
             if i > 0 {
                 // ATR should be gradually increasing toward the new volatility level
-                assert!(
-                    current_atr > prev_atr,
-                    "ATR should increase at iteration {i}"
-                );
+                assert!(current_atr > prev_atr, "ATR should increase at iteration {i}");
             }
             prev_atr = current_atr;
         }
 
         // After many periods, ATR should be close to the new true range
         let final_atr = atr.value().unwrap();
-        assert!(
-            final_atr > 15.0,
-            "ATR should converge toward high volatility"
-        );
-        assert!(
-            final_atr < 20.0,
-            "ATR shouldn't fully reach new TR immediately due to smoothing"
-        );
+        assert!(final_atr > 15.0, "ATR should converge toward high volatility");
+        assert!(final_atr < 20.0, "ATR shouldn't fully reach new TR immediately due to smoothing");
     }
 
     #[test]
@@ -280,11 +257,7 @@ mod tests {
         // Low volatility period
         for i in 0..10 {
             let base = 100.0;
-            atr.update(OHLCData::new(
-                base + 0.5,
-                base - 0.5,
-                base + (i as f64 * 0.1),
-            ));
+            atr.update(OHLCData::new(base + 0.5, base - 0.5, base + (i as f64 * 0.1)));
         }
 
         // High volatility period

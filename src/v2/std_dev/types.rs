@@ -12,10 +12,7 @@ pub struct StandardDeviationConfig {
 
 impl Default for StandardDeviationConfig {
     fn default() -> Self {
-        Self {
-            period: 20,
-            use_sample: true,
-        }
+        Self { period: 20, use_sample: true }
     }
 }
 

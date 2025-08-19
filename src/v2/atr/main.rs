@@ -119,28 +119,21 @@ impl ATR {
                 self.atr_value = Some(initial_atr);
                 self.initialized = true;
 
-                return Some(ATRResult {
-                    atr: initial_atr,
-                    true_range,
-                });
+                return Some(ATRResult { atr: initial_atr, true_range });
             }
 
             None
         } else {
             // Wilder's smoothing: ATR = ((ATR_prev * (n-1)) + TR) / n
             if let Some(prev_atr) = self.atr_value {
-                let new_atr =
-                    (prev_atr * (self.period - 1) as f64 + true_range) / self.period as f64;
+                let new_atr = (prev_atr * (self.period - 1) as f64 + true_range) / self.period as f64;
                 self.atr_value = Some(new_atr);
 
                 // Keep only the last true range for reference
                 self.true_ranges.clear();
                 self.true_ranges.push(true_range);
 
-                Some(ATRResult {
-                    atr: new_atr,
-                    true_range,
-                })
+                Some(ATRResult { atr: new_atr, true_range })
             } else {
                 None
             }
@@ -158,10 +151,7 @@ impl ATR {
     }
 
     /// Batch calculation for historical data
-    pub fn calculate_batch(
-        period: usize,
-        data: &[OHLCData],
-    ) -> Result<Vec<Option<ATRResult>>, ATRError> {
+    pub fn calculate_batch(period: usize, data: &[OHLCData]) -> Result<Vec<Option<ATRResult>>, ATRError> {
         let mut atr = Self::new(period)?;
         let mut results = Vec::with_capacity(data.len());
 

@@ -84,7 +84,7 @@ impl MACD {
     /// # Returns
     ///
     /// * `Some(MACDResult)` containing the MACD line, signal line, histogram, and trading signal,
-    ///    if the EMAs have been sufficiently initialized.
+    ///   if the EMAs have been sufficiently initialized.
     /// * `None` if any of the EMA calculations are not yet available.
     pub fn calculate(&mut self, price: f64) -> Option<MACDResult> {
         let fast = self.fast_ema.add_value(price)?;

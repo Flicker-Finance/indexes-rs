@@ -114,12 +114,7 @@ impl StochasticOscillator {
     }
 
     /// Batch calculation for historical data
-    pub fn calculate_batch(
-        period: usize,
-        k_smooth: usize,
-        d_period: usize,
-        data: &[OHLCData],
-    ) -> Result<Vec<Option<StochasticResult>>, StochasticError> {
+    pub fn calculate_batch(period: usize, k_smooth: usize, d_period: usize, data: &[OHLCData]) -> Result<Vec<Option<StochasticResult>>, StochasticError> {
         let mut stoch = Self::new(period, k_smooth, d_period)?;
         let mut results = Vec::with_capacity(data.len());
 

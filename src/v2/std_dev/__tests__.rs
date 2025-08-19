@@ -1,9 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::v2::std_dev::{
-        main::{
-            calculate_standard_deviation_simple, rolling_standard_deviation, StandardDeviation,
-        },
+        main::{calculate_standard_deviation_simple, rolling_standard_deviation, StandardDeviation},
         types::{StandardDeviationError, StandardDeviationInput},
     };
 
@@ -48,12 +46,8 @@ mod tests {
         }
 
         // Sample std dev should be larger than population std dev
-        let pop_result = pop_std_dev
-            .calculate(StandardDeviationInput { value: 5.0 })
-            .unwrap();
-        let sample_result = sample_std_dev
-            .calculate(StandardDeviationInput { value: 5.0 })
-            .unwrap();
+        let pop_result = pop_std_dev.calculate(StandardDeviationInput { value: 5.0 }).unwrap();
+        let sample_result = sample_std_dev.calculate(StandardDeviationInput { value: 5.0 }).unwrap();
 
         assert!(sample_result.std_dev > pop_result.std_dev);
     }
@@ -89,11 +83,7 @@ mod tests {
         let outlier_result = std_dev.calculate(outlier_input).unwrap();
 
         // Z-score should be positive and significant
-        assert!(
-            outlier_result.z_score > 1.0,
-            "Z-score {} should be > 1.0",
-            outlier_result.z_score
-        );
+        assert!(outlier_result.z_score > 1.0, "Z-score {} should be > 1.0", outlier_result.z_score);
         println!(
             "Outlier Z-score: {}, Std Dev: {}, Mean: {}",
             outlier_result.z_score, outlier_result.std_dev, outlier_result.mean
@@ -138,12 +128,8 @@ mod tests {
             let _ = high_vol.calculate(input).unwrap();
         }
 
-        let low_result = low_vol
-            .calculate(StandardDeviationInput { value: 100.0 })
-            .unwrap();
-        let high_result = high_vol
-            .calculate(StandardDeviationInput { value: 100.0 })
-            .unwrap();
+        let low_result = low_vol.calculate(StandardDeviationInput { value: 100.0 }).unwrap();
+        let high_result = high_vol.calculate(StandardDeviationInput { value: 100.0 }).unwrap();
 
         // High volatility should have higher coefficient of variation
         assert!(high_result.coefficient_of_variation > low_result.coefficient_of_variation);
@@ -173,22 +159,13 @@ mod tests {
     #[test]
     fn test_std_dev_error_handling() {
         // Test invalid period
-        assert!(matches!(
-            StandardDeviation::with_period(0),
-            Err(StandardDeviationError::InvalidPeriod)
-        ));
-        assert!(matches!(
-            StandardDeviation::sample(1),
-            Err(StandardDeviationError::InvalidPeriod)
-        ));
+        assert!(matches!(StandardDeviation::with_period(0), Err(StandardDeviationError::InvalidPeriod)));
+        assert!(matches!(StandardDeviation::sample(1), Err(StandardDeviationError::InvalidPeriod)));
 
         // Test invalid value
         let mut std_dev = StandardDeviation::new();
         let invalid_input = StandardDeviationInput { value: f64::NAN };
-        assert!(matches!(
-            std_dev.calculate(invalid_input),
-            Err(StandardDeviationError::InvalidValue)
-        ));
+        assert!(matches!(std_dev.calculate(invalid_input), Err(StandardDeviationError::InvalidValue)));
     }
 
     #[test]

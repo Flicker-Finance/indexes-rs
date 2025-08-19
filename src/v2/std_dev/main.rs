@@ -1,7 +1,4 @@
-use crate::v2::std_dev::types::{
-    StandardDeviationConfig, StandardDeviationError, StandardDeviationInput,
-    StandardDeviationOutput, StandardDeviationState, VolatilityLevel,
-};
+use crate::v2::std_dev::types::{StandardDeviationConfig, StandardDeviationError, StandardDeviationInput, StandardDeviationOutput, StandardDeviationState, VolatilityLevel};
 
 /// Standard Deviation Indicator
 ///
@@ -39,10 +36,7 @@ impl StandardDeviation {
             return Err(StandardDeviationError::InvalidPeriod);
         }
 
-        let config = StandardDeviationConfig {
-            period,
-            ..Default::default()
-        };
+        let config = StandardDeviationConfig { period, ..Default::default() };
         Ok(Self::with_config(config))
     }
 
@@ -52,10 +46,7 @@ impl StandardDeviation {
             return Err(StandardDeviationError::InvalidPeriod);
         }
 
-        let config = StandardDeviationConfig {
-            period,
-            use_sample: false,
-        };
+        let config = StandardDeviationConfig { period, use_sample: false };
         Ok(Self::with_config(config))
     }
 
@@ -65,10 +56,7 @@ impl StandardDeviation {
             return Err(StandardDeviationError::InvalidPeriod);
         }
 
-        let config = StandardDeviationConfig {
-            period,
-            use_sample: true,
-        };
+        let config = StandardDeviationConfig { period, use_sample: true };
         Ok(Self::with_config(config))
     }
 
@@ -80,10 +68,7 @@ impl StandardDeviation {
     }
 
     /// Calculate Standard Deviation for the given input
-    pub fn calculate(
-        &mut self,
-        input: StandardDeviationInput,
-    ) -> Result<StandardDeviationOutput, StandardDeviationError> {
+    pub fn calculate(&mut self, input: StandardDeviationInput) -> Result<StandardDeviationOutput, StandardDeviationError> {
         // Validate input
         self.validate_input(&input)?;
         self.validate_config()?;
@@ -99,17 +84,9 @@ impl StandardDeviation {
         };
 
         // Calculate derived metrics
-        let z_score = if std_dev != 0.0 {
-            (input.value - mean) / std_dev
-        } else {
-            0.0
-        };
+        let z_score = if std_dev != 0.0 { (input.value - mean) / std_dev } else { 0.0 };
 
-        let coefficient_of_variation = if mean != 0.0 {
-            (std_dev / mean.abs()) * 100.0
-        } else {
-            0.0
-        };
+        let coefficient_of_variation = if mean != 0.0 { (std_dev / mean.abs()) * 100.0 } else { 0.0 };
 
         // Classify volatility level
         let volatility_level = self.classify_volatility(std_dev, mean);
@@ -126,10 +103,7 @@ impl StandardDeviation {
     }
 
     /// Calculate Standard Deviation for a batch of inputs
-    pub fn calculate_batch(
-        &mut self,
-        inputs: &[StandardDeviationInput],
-    ) -> Result<Vec<StandardDeviationOutput>, StandardDeviationError> {
+    pub fn calculate_batch(&mut self, inputs: &[StandardDeviationInput]) -> Result<Vec<StandardDeviationOutput>, StandardDeviationError> {
         inputs.iter().map(|input| self.calculate(*input)).collect()
     }
 
@@ -226,8 +200,7 @@ impl StandardDeviation {
 
         // Check if we have sufficient data
         let min_required = if self.state.config.use_sample { 2 } else { 1 };
-        self.state.has_sufficient_data =
-            self.state.values.len() >= self.state.config.period.max(min_required);
+        self.state.has_sufficient_data = self.state.values.len() >= self.state.config.period.max(min_required);
     }
 
     fn calculate_standard_deviation(&self) -> Result<(f64, f64, f64), StandardDeviationError> {
@@ -269,11 +242,7 @@ impl StandardDeviation {
         }
 
         // Use coefficient of variation for relative volatility measurement
-        let cv = if mean != 0.0 {
-            (std_dev / mean.abs()) * 100.0
-        } else {
-            0.0
-        };
+        let cv = if mean != 0.0 { (std_dev / mean.abs()) * 100.0 } else { 0.0 };
 
         // Classification based on coefficient of variation
         match cv {
@@ -293,11 +262,7 @@ impl Default for StandardDeviation {
 }
 
 /// Convenience function to calculate standard deviation for a series of values
-pub fn calculate_standard_deviation_simple(
-    values: &[f64],
-    period: usize,
-    use_sample: bool,
-) -> Result<Vec<f64>, StandardDeviationError> {
+pub fn calculate_standard_deviation_simple(values: &[f64], period: usize, use_sample: bool) -> Result<Vec<f64>, StandardDeviationError> {
     if values.is_empty() {
         return Ok(Vec::new());
     }
@@ -317,11 +282,7 @@ pub fn calculate_standard_deviation_simple(
 }
 
 /// Calculate rolling standard deviation over a window
-pub fn rolling_standard_deviation(
-    values: &[f64],
-    window: usize,
-    use_sample: bool,
-) -> Result<Vec<f64>, StandardDeviationError> {
+pub fn rolling_standard_deviation(values: &[f64], window: usize, use_sample: bool) -> Result<Vec<f64>, StandardDeviationError> {
     if values.is_empty() || window == 0 {
         return Ok(Vec::new());
     }
@@ -333,16 +294,13 @@ pub fn rolling_standard_deviation(
     let mut results = Vec::with_capacity(values.len());
 
     for i in 0..values.len() {
-        let start = if i + 1 >= window { i + 1 - window } else { 0 };
+        let start = (i + 1).saturating_sub(window);
         let end = i + 1;
         let window_values = &values[start..end];
 
         if window_values.len() >= if use_sample { 2 } else { 1 } {
             let mean = window_values.iter().sum::<f64>() / window_values.len() as f64;
-            let variance = window_values
-                .iter()
-                .map(|x| (x - mean).powi(2))
-                .sum::<f64>()
+            let variance = window_values.iter().map(|x| (x - mean).powi(2)).sum::<f64>()
                 / if use_sample && window_values.len() > 1 {
                     window_values.len() - 1
                 } else {

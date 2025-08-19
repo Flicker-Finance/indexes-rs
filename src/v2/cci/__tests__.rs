@@ -31,11 +31,7 @@ mod tests {
             assert!((result.typical_price - expected_tp).abs() < 1e-10);
 
             // CCI should be finite
-            assert!(
-                result.cci.is_finite(),
-                "CCI should be finite at index {}",
-                i
-            );
+            assert!(result.cci.is_finite(), "CCI should be finite at index {}", i);
 
             // If we have sufficient data, mean deviation should be >= 0
             if i >= 2 {
@@ -85,11 +81,7 @@ mod tests {
         let mut cci = CCI::with_config(config);
 
         // Test insufficient data
-        let input1 = CCIInput {
-            high: 10.0,
-            low: 8.0,
-            close: 9.0,
-        };
+        let input1 = CCIInput { high: 10.0, low: 8.0, close: 9.0 };
         let result1 = cci.calculate(input1).unwrap();
         assert_eq!(result1.market_condition, CCIMarketCondition::Insufficient);
 
@@ -156,11 +148,7 @@ mod tests {
         let mut cci = CCI::new();
 
         // Test invalid HLC (high < low)
-        let input = CCIInput {
-            high: 8.0,
-            low: 10.0,
-            close: 9.0,
-        };
+        let input = CCIInput { high: 8.0, low: 10.0, close: 9.0 };
         assert!(matches!(cci.calculate(input), Err(CCIError::InvalidHLC)));
 
         // Test close out of range
@@ -201,11 +189,7 @@ mod tests {
         let mut cci = CCI::with_period(3).unwrap();
 
         // Test with very small price ranges
-        let small_range_data = vec![
-            (10.001, 10.000, 10.0005),
-            (10.002, 10.001, 10.0015),
-            (10.003, 10.002, 10.0025),
-        ];
+        let small_range_data = vec![(10.001, 10.000, 10.0005), (10.002, 10.001, 10.0015), (10.003, 10.002, 10.0025)];
 
         for (high, low, close) in small_range_data {
             let input = CCIInput { high, low, close };

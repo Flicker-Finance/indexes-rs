@@ -22,9 +22,7 @@ impl OBV {
 
     /// Create a new OBV calculator with custom configuration
     pub fn with_config(config: OBVConfig) -> Self {
-        Self {
-            state: OBVState::new(config),
-        }
+        Self { state: OBVState::new(config) }
     }
 
     /// Calculate OBV for the given input
@@ -115,9 +113,7 @@ impl OBV {
 /// Convenience function to calculate OBV for a single input without maintaining state
 pub fn calculate_obv_simple(close_prices: &[f64], volumes: &[f64]) -> Result<Vec<f64>, OBVError> {
     if close_prices.len() != volumes.len() {
-        return Err(OBVError::InvalidInput(
-            "Close prices and volumes must have same length".to_string(),
-        ));
+        return Err(OBVError::InvalidInput("Close prices and volumes must have same length".to_string()));
     }
 
     if close_prices.is_empty() {
@@ -128,10 +124,7 @@ pub fn calculate_obv_simple(close_prices: &[f64], volumes: &[f64]) -> Result<Vec
     let mut results = Vec::with_capacity(close_prices.len());
 
     for (close, volume) in close_prices.iter().zip(volumes.iter()) {
-        let input = OBVInput {
-            close: *close,
-            volume: *volume,
-        };
+        let input = OBVInput { close: *close, volume: *volume };
         let output = obv_calculator.calculate(input)?;
         results.push(output.obv);
     }
